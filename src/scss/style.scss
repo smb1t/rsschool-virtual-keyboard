@@ -20,3 +20,139 @@ body {
   background: $background url(../images/background.jpg?as=webp) no-repeat 50% 50%;
   background-size: cover;
 }
+
+%flex {
+  display: flex;
+}
+
+%flex-container {
+  justify-content: center;
+  align-items: center;
+  @extend %flex;
+}
+
+.hidden {
+  display: none;
+}
+
+.keyboard {
+  position: relative;
+  width: $container-size;
+  padding: $keyboard-gap;
+  border-radius: $keyboard-border-radius;
+  background-color: $keyboard-background;
+  // overflow: hidden;
+
+  box-shadow: 0 10px 15px 0px rgb(0 0 0 / 60%), 0 15px 25px 0px rgb(0 0 0 / 60%);
+  border: 2px solid #e3e3e3;
+
+  &-container {
+    flex-direction: column;
+    height: 100vh;
+    margin: 0 10px;
+    @extend %flex-container;
+  }
+}
+
+.title {
+  color: #b9b9b9;
+  margin-bottom: 30px;
+}
+
+.row {
+  @extend %flex;
+}
+
+.key {
+  position: relative;
+  z-index: 5;
+  width: $key-size;
+  height: $key-size;
+  margin: $key-gap;
+  border-radius: $key-border-radius;
+  cursor: pointer;
+  
+  background-color: $key-background;
+  transition: 0.2s;
+  box-shadow: 0 0 3px 1px rgb(108 108 108 / 25%), inset 0 0 3px 0px rgb(94 94 94 / 30%);
+
+  @extend %flex-container;
+
+  &--backspace {
+    width: 158px;
+  }
+
+  &--tab {
+    width: 90px;
+  }
+
+  &--caps-lock {
+    width: 108px;
+  }
+
+  &--enter {
+    width: 178px;
+  }
+
+  &--shift {
+    &-left {
+      width: 158px;
+    }
+
+    &-right {
+      width: 128px;
+    }
+  }
+
+  &--space {
+    max-width: 498px;
+    width: 100%;
+  }
+
+  & > :first-child {
+      top: $key-inner-position;
+      left: $key-inner-position;
+  }
+
+  & > :last-child {
+      right: $key-inner-position;
+      bottom: $key-inner-position;
+  }
+
+  &:hover,
+  &.is-pressed {
+    background-color: #48484a;
+    color: #fff;
+    box-shadow: 0 0 1px 1px rgb(108 108 108 / 50%);
+    text-shadow: 0 0 2px #fdffca;
+  }
+
+  &.is-active { 
+    background-color: tomato;
+    color: #fff; // todo: temp style
+  }
+}
+
+.input-area {
+  max-width: $container-size;
+  min-width: $container-size;
+  width: $container-size;
+  max-height: 460px;
+  min-height: 120px;
+  height: 348px;
+  margin-bottom: 30px;
+  border: none;
+  outline: none;
+  font-size: 1.375rem;
+  background-color: $input-area-background;
+  padding: 1rem;
+  font-weight: normal;
+  transition: 0.1s;
+
+  box-shadow: 0 10px 15px 0px rgb(0 0 0 / 50%), 0 15px 35px 0px rgb(0 0 0 / 50%);
+  border-radius: $keyboard-border-radius;
+  color: $input-area-color;
+  border: 2px solid #5d5d5e;
+  box-sizing: border-box;
+
+}
