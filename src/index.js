@@ -353,7 +353,7 @@ class VirtualKeyboard {
       // console.log(name);
 
       if (!Object.keys(this.keySpecClasses).includes(name) && !this.excludeKEys.includes(name)) {
-        // this.inputArea.value += key.getAttribute('data-value');
+        this.inputArea.value += key.getAttribute('data-value');
         // todo: insert value before cursor
       }
 
