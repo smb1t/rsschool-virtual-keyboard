@@ -49,16 +49,66 @@ class VirtualKeyboard {
       const activeKey = document.querySelector(`[data-name=${e.code}]`);
       activeKey.classList.add('is-pressed');
 
-      // for (let i = 0; i < keys.length; i += 1) {}
-
       if (e.shiftKey && e.ctrlKey) this.changeLang(keys);
+      if (e.code === 'CapsLock') {
+        this.CapsLock = !this.CapsLock;
+        activeKey.classList.toggle('is-active');
+        this.capsLockHandler(keys);
+      }
+
+      if (e.shiftKey) this.shiftHandler(keys, e.type);
     });
     document.addEventListener('keyup', (e) => {
       for (let i = 0; i < keys.length; i += 1) {
         const activeKey = document.querySelector(`[data-name=${e.code}]`);
         activeKey.classList.remove('is-pressed');
       }
+
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') this.shiftHandler(keys, e.type);
     });
+  }
+
+  shiftHandler(keys, evenType) {
+    for (let i = 0; i < keys.length; i += 1) {
+      const span = keys[i].querySelector(`[data-lang="${this.lang}"]`);
+      const lc = span.querySelector('.lowwercase');
+      const uc = span.querySelector('.uppercase');
+      const co = span.querySelector('.capson');
+      const sc = span.querySelector('.shiftcaps');
+
+      if (evenType === 'keydown') {
+        if (this.CapsLock) {
+          co.classList.add('hidden');
+          sc.classList.remove('hidden');
+        } else {
+          lc.classList.add('hidden');
+          uc.classList.remove('hidden');
+        }
+      }
+      if (evenType === 'keyup') {
+        if (this.CapsLock) {
+          co.classList.remove('hidden');
+          sc.classList.add('hidden');
+        } else {
+          lc.classList.remove('hidden');
+          uc.classList.add('hidden');
+        }
+      }
+    }
+  }
+
+  capsLockHandler(keys) {
+    for (let i = 0; i < keys.length; i += 1) {
+      const span = keys[i].querySelector(`[data-lang="${this.lang}"]`);
+      const inners = [
+        span.querySelector('.lowwercase'),
+        span.querySelector('.capson'),
+      ];
+
+      for (let j = 0; j < inners.length; j += 1) {
+        inners[j].classList.toggle('hidden');
+      }
+    }
   }
 
   changeLang(keys) {
@@ -74,6 +124,13 @@ class VirtualKeyboard {
       const spans = keys[i].children;
       for (let j = 0; j < spans.length; j += 1) {
         spans[j].classList.toggle('hidden');
+
+        if (spans[j].getAttribute('data-name') !== this.lang) {
+          const inners = spans[j].querySelectorAll('span');
+          for (let k = 0; k < inners.length; k += 1) {
+            if (!inners[k].classList.contains('hidden')) inners[k].classList.add('hidden');
+          }
+        }
       }
     }
   }
