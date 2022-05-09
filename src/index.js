@@ -35,6 +35,18 @@ class VirtualKeyboard {
     this.CapsLock = false;
     this.Shift = false;
     this.letters = ['Backquote', 'BracketLeft', 'BracketRight', 'Semicolon', 'Quote', 'Comma', 'Period'];
+    this.excludeKEys = [
+      'Delete',
+      'ArrowUp',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowDown',
+      'ControlRight',
+      'ControlLeft',
+      'AltRight',
+      'AltLeft',
+      'MetaLeft',
+    ];
 
     // this.createBoard();
   }
@@ -74,10 +86,10 @@ class VirtualKeyboard {
       },
     });
 
-    title.innerText = 'RSS Virtual Keyboard.';
+    title.innerText = 'RSS Virtual Keyboard';
 
     // eslint-disable-next-line no-unused-vars
-    const inputArea = this.createElement({
+    this.inputArea = this.createElement({
       parent: container,
       element: 'textarea',
       attributes: {
@@ -101,6 +113,21 @@ class VirtualKeyboard {
     });
 
     this.fillBoard();
+
+    const descr = [
+      'Клавиатура создана в операционной системе Windows.',
+      'Для переключения языка используется комбинация: <span>Ctrl</span> + <span>Shift</span>. Клавиши <span>Shift</span> при клике мышкой работает как <span>Caps Lock</span>.',
+    ];
+
+    descr.forEach((el) => {
+      const p = this.createElement({
+        parent: container,
+        element: 'p',
+        attributes: { class: 'description' },
+      });
+
+      p.innerHTML = el;
+    });
   }
 
   fillBoard() {
@@ -128,6 +155,7 @@ class VirtualKeyboard {
         'data-name': name,
       },
     });
+    let value = '';
 
     if (name in this.keySpecClasses) key.classList.add(this.keySpecClasses[name]);
 
@@ -142,9 +170,13 @@ class VirtualKeyboard {
         },
       });
 
-      if (this.lang !== langs[i]) span.classList.add('hidden');
-
       const keyCont = keysLang[langs[i]][index][name];
+
+      if (this.lang !== langs[i]) {
+        span.classList.add('hidden');
+      } else {
+        value = keyCont[[0]];
+      }
 
       for (let j = 0; j < 4; j += 1) {
         const spanInner = this.createElement({
@@ -167,11 +199,14 @@ class VirtualKeyboard {
         spanInner.innerText = keyCont[c];
       }
     }
+
+    key.setAttribute('data-value', value);
   }
 
   keyEventsHandler() {
     const keys = document.querySelectorAll('.key');
     document.addEventListener('keydown', (e) => {
+      this.inputArea.focus();
       const activeKey = document.querySelector(`[data-name=${e.code}]`);
       activeKey.classList.add('is-pressed');
 
@@ -207,14 +242,17 @@ class VirtualKeyboard {
       const uc = span.querySelector('.uppercase');
       const co = span.querySelector('.capson');
       const sc = span.querySelector('.shiftcaps');
+      let value = '';
 
       if (this.Shift) {
         if (this.CapsLock) {
           co.classList.add('hidden');
           sc.classList.remove('hidden');
+          value = sc.innerText;
         } else {
           lc.classList.add('hidden');
           uc.classList.remove('hidden');
+          value = uc.innerText;
         }
       }
 
@@ -222,11 +260,15 @@ class VirtualKeyboard {
         if (this.CapsLock) {
           co.classList.remove('hidden');
           sc.classList.add('hidden');
+          value = co.innerText;
         } else {
           lc.classList.remove('hidden');
           uc.classList.add('hidden');
+          value = lc.innerText;
         }
       }
+
+      keys[i].setAttribute('data-value', value);
     }
   }
 
@@ -237,14 +279,17 @@ class VirtualKeyboard {
       const uc = span.querySelector('.uppercase');
       const co = span.querySelector('.capson');
       const sc = span.querySelector('.shiftcaps');
+      let value = '';
 
       if (this.CapsLock) {
         if (!this.Shift) {
           lc.classList.add('hidden');
           co.classList.remove('hidden');
+          value = co.innerText;
         } else {
           uc.classList.add('hidden');
           sc.classList.remove('hidden');
+          value = sc.innerText;
         }
       }
 
@@ -256,7 +301,11 @@ class VirtualKeyboard {
           lc.classList.remove('hidden');
           sc.classList.add('hidden');
         }
+
+        value = lc.innerText;
       }
+
+      keys[i].setAttribute('data-value', value);
     }
   }
 
@@ -289,12 +338,68 @@ class VirtualKeyboard {
       e.preventDefault();
       e.stopImmediatePropagation();
 
+      this.inputArea.focus();
       const keys = this.kboard.querySelectorAll('.key');
-      const key = !e.target.classList.contains('key') ? e.target.closest('div.key') : e.target;
+
+      if (!e.target.classList.contains('key') && !e.target.closest('div.key')) {
+        return;
+      }
+
+      const key = e.target.classList.contains('key') ? e.target : e.target.closest('div.key');
       const name = key.getAttribute('data-name');
+
+      if (name === null) return;
+
+      // console.log(name);
+
+      if (!Object.keys(this.keySpecClasses).includes(name) && !this.excludeKEys.includes(name)) {
+        // this.inputArea.value += key.getAttribute('data-value');
+        // todo: insert value before cursor
+      }
+
+      if (name === 'Backspace') {
+        // console.log(name); // todo: Backspace key value
+      }
+
+      if (name === 'Space') this.inputArea.value += ' ';
+
+      const startPoint = this.inputArea.selectionStart;
+      const endPoint = this.inputArea.selectionEnd;
+
+      if (name === 'ArrowUp') {
+        // console.log(name); // todo: ArrowUp key value
+      }
+
+      if (name === 'ArrowDown') {
+        // console.log(name); // todo: ArrowDown key value
+      }
+
+      if (name === 'ArrowLeft') {
+        this.inputArea.selectionEnd = endPoint - 1;
+        this.inputArea.selectionStart = startPoint - 1;
+      }
+
+      if (name === 'ArrowRight') {
+        this.inputArea.selectionEnd = startPoint + 1;
+        this.inputArea.selectionStart = startPoint + 1;
+      }
+
+      if (name === 'MetaLeft') {
+        // console.log(name); // todo: MetaLeft key value
+      }
+      if (name === 'Delete') {
+        // console.log(name); // todo: Delete key value
+      }
+      if (name === 'Enter') {
+        // console.log(name); // todo: Enter key value
+      }
 
       if (name === 'ShiftLeft' || name === 'ShiftRight') {
         key.classList.toggle('is-active');
+
+        if (name === 'ShiftLeft') keys[54].classList.toggle('is-active');
+        if (name === 'ShiftRight') keys[42].classList.toggle('is-active');
+
         if (!this.Shift) {
           this.Shift = true;
           this.shiftHandler(keys);
@@ -315,12 +420,7 @@ class VirtualKeyboard {
           this.capsLockHandler(keys);
         }
       }
-
       // console.log(e.target);
-    });
-
-    this.kboard.addEventListener('leave', (e) => {
-
     });
   }
 }
