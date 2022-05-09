@@ -40,6 +40,42 @@ class VirtualKeyboard {
 
   init() {
     this.createBoard();
+    this.keyEventsHandler();
+  }
+
+  keyEventsHandler() {
+    const keys = document.querySelectorAll('.key');
+    document.addEventListener('keydown', (e) => {
+      const activeKey = document.querySelector(`[data-name=${e.code}]`);
+      activeKey.classList.add('is-pressed');
+
+      // for (let i = 0; i < keys.length; i += 1) {}
+
+      if (e.shiftKey && e.ctrlKey) this.changeLang(keys);
+    });
+    document.addEventListener('keyup', (e) => {
+      for (let i = 0; i < keys.length; i += 1) {
+        const activeKey = document.querySelector(`[data-name=${e.code}]`);
+        activeKey.classList.remove('is-pressed');
+      }
+    });
+  }
+
+  changeLang(keys) {
+    if (this.lang === 'en') {
+      localStorage.setItem('lang', 'ru');
+      this.lang = localStorage.getItem('lang');
+    } else {
+      localStorage.setItem('lang', 'en');
+      this.lang = localStorage.getItem('lang');
+    }
+
+    for (let i = 0; i < keys.length; i += 1) {
+      const spans = keys[i].children;
+      for (let j = 0; j < spans.length; j += 1) {
+        spans[j].classList.toggle('hidden');
+      }
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
