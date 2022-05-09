@@ -1,0 +1,22 @@
+/*--------------------------------------------------------------
+    RS Virtual keyboard styles
+--------------------------------------------------------------*/
+
+@import 'variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Lato, $font-default-sans-serif;
+  font-weight: 400;
+  background: $background url(../images/background.jpg?as=webp) no-repeat 50% 50%;
+  background-size: cover;
+}
