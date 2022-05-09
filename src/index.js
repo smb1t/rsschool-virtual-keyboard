@@ -33,6 +33,7 @@ class VirtualKeyboard {
       AltRight: 'key--alt-right',
     };
     this.CapsLock = false;
+    this.Shift = false;
     this.letters = ['Backquote', 'BracketLeft', 'BracketRight', 'Semicolon', 'Quote', 'Comma', 'Period'];
 
     // this.createBoard();
@@ -41,6 +42,7 @@ class VirtualKeyboard {
   init() {
     this.createBoard();
     this.keyEventsHandler();
+    this.mouseEventHandler();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -86,14 +88,14 @@ class VirtualKeyboard {
       },
     });
 
-    const kboard = this.createElement({
+    this.kboard = this.createElement({
       parent: container,
       element: 'div',
       attributes: { class: 'keyboard' },
     });
 
     this.kboardInner = this.createElement({
-      parent: kboard,
+      parent: this.kboard,
       element: 'div',
       attributes: { class: 'keyboard__inner' },
     });
@@ -180,7 +182,10 @@ class VirtualKeyboard {
         this.capsLockHandler(keys);
       }
 
-      if (e.shiftKey) this.shiftHandler(keys, e.type);
+      if (e.shiftKey) {
+        this.Shift = true;
+        this.shiftHandler(keys);
+      }
     });
     document.addEventListener('keyup', (e) => {
       for (let i = 0; i < keys.length; i += 1) {
@@ -188,11 +193,14 @@ class VirtualKeyboard {
         activeKey.classList.remove('is-pressed');
       }
 
-      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') this.shiftHandler(keys, e.type);
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+        this.Shift = false;
+        this.shiftHandler(keys);
+      }
     });
   }
 
-  shiftHandler(keys, evenType) {
+  shiftHandler(keys) {
     for (let i = 0; i < keys.length; i += 1) {
       const span = keys[i].querySelector(`[data-lang="${this.lang}"]`);
       const lc = span.querySelector('.lowwercase');
@@ -200,7 +208,7 @@ class VirtualKeyboard {
       const co = span.querySelector('.capson');
       const sc = span.querySelector('.shiftcaps');
 
-      if (evenType === 'keydown') {
+      if (this.Shift) {
         if (this.CapsLock) {
           co.classList.add('hidden');
           sc.classList.remove('hidden');
@@ -209,7 +217,8 @@ class VirtualKeyboard {
           uc.classList.remove('hidden');
         }
       }
-      if (evenType === 'keyup') {
+
+      if (!this.Shift) {
         if (this.CapsLock) {
           co.classList.remove('hidden');
           sc.classList.add('hidden');
@@ -224,13 +233,29 @@ class VirtualKeyboard {
   capsLockHandler(keys) {
     for (let i = 0; i < keys.length; i += 1) {
       const span = keys[i].querySelector(`[data-lang="${this.lang}"]`);
-      const inners = [
-        span.querySelector('.lowwercase'),
-        span.querySelector('.capson'),
-      ];
+      const lc = span.querySelector('.lowwercase');
+      const uc = span.querySelector('.uppercase');
+      const co = span.querySelector('.capson');
+      const sc = span.querySelector('.shiftcaps');
 
-      for (let j = 0; j < inners.length; j += 1) {
-        inners[j].classList.toggle('hidden');
+      if (this.CapsLock) {
+        if (!this.Shift) {
+          lc.classList.add('hidden');
+          co.classList.remove('hidden');
+        } else {
+          uc.classList.add('hidden');
+          sc.classList.remove('hidden');
+        }
+      }
+
+      if (!this.CapsLock) {
+        if (!this.Shift) {
+          lc.classList.remove('hidden');
+          co.classList.add('hidden');
+        } else {
+          lc.classList.remove('hidden');
+          sc.classList.add('hidden');
+        }
       }
     }
   }
@@ -257,6 +282,46 @@ class VirtualKeyboard {
         }
       }
     }
+  }
+
+  mouseEventHandler() {
+    this.kboard.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const keys = this.kboard.querySelectorAll('.key');
+      const key = !e.target.classList.contains('key') ? e.target.closest('div.key') : e.target;
+      const name = key.getAttribute('data-name');
+
+      if (name === 'ShiftLeft' || name === 'ShiftRight') {
+        key.classList.toggle('is-active');
+        if (!this.Shift) {
+          this.Shift = true;
+          this.shiftHandler(keys);
+        } else {
+          this.Shift = false;
+          this.shiftHandler(keys);
+        }
+      }
+
+      if (name === 'CapsLock') {
+        if (!this.CapsLock) {
+          this.CapsLock = true;
+          key.classList.toggle('is-active');
+          this.capsLockHandler(keys);
+        } else {
+          this.CapsLock = false;
+          key.classList.toggle('is-active');
+          this.capsLockHandler(keys);
+        }
+      }
+
+      // console.log(e.target);
+    });
+
+    this.kboard.addEventListener('leave', (e) => {
+
+    });
   }
 }
 
