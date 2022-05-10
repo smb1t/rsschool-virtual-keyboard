@@ -35,7 +35,7 @@ class VirtualKeyboard {
     this.CapsLock = false;
     this.Shift = false;
     this.letters = ['Backquote', 'BracketLeft', 'BracketRight', 'Semicolon', 'Quote', 'Comma', 'Period'];
-    this.excludeKEys = [
+    this.excludeKeys = [
       'Delete',
       'ArrowUp',
       'ArrowLeft',
@@ -333,12 +333,17 @@ class VirtualKeyboard {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  insertValue(value, el) {
+    const [start, end] = [el.selectionStart, el.selectionEnd];
+    el.setRangeText(value, start, end, 'end');
+  }
+
   mouseEventHandler() {
     this.kboard.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
 
-      this.inputArea.focus();
       const keys = this.kboard.querySelectorAll('.key');
 
       if (!e.target.classList.contains('key') && !e.target.closest('div.key')) {
@@ -347,24 +352,22 @@ class VirtualKeyboard {
 
       const key = e.target.classList.contains('key') ? e.target : e.target.closest('div.key');
       const name = key.getAttribute('data-name');
+      // const value = name === 'Space' ? ' ' : key.getAttribute('data-value');
 
       if (name === null) return;
 
+      this.inputArea.focus();
+
+      const exclKeys = Object.keys(this.keySpecClasses).concat(this.excludeKeys).filter((value) => value !== 'Space');
+      const startPoint = this.inputArea.selectionStart;
+      const endPoint = this.inputArea.selectionEnd;
       // console.log(name);
 
-      if (!Object.keys(this.keySpecClasses).includes(name) && !this.excludeKEys.includes(name)) {
-        this.inputArea.value += key.getAttribute('data-value');
-        // todo: insert value before cursor
-      }
+      if (!exclKeys.includes(name)) this.insertValue(key.getAttribute('data-value'), this.inputArea);
 
       if (name === 'Backspace') {
         // console.log(name); // todo: Backspace key value
       }
-
-      if (name === 'Space') this.inputArea.value += ' ';
-
-      const startPoint = this.inputArea.selectionStart;
-      const endPoint = this.inputArea.selectionEnd;
 
       if (name === 'ArrowUp') {
         // console.log(name); // todo: ArrowUp key value
