@@ -1,0 +1,182 @@
+/*--------------------------------------------------------------
+    RS Virtual keyboard styles
+--------------------------------------------------------------*/
+
+@import 'variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Lato, $font-default-sans-serif;
+  font-weight: 400;
+  background: $color-10 url(../images/background.jpg?as=webp) no-repeat 50% 50%;
+  background-size: cover;
+  color: $color-9;
+}
+
+%flex {
+  display: flex;
+}
+
+%flex-container {
+  justify-content: center;
+  align-items: center;
+  @extend %flex;
+}
+
+.hidden {
+  display: none;
+}
+
+.keyboard {
+  position: relative;
+  width: $container-size;
+  padding: $keyboard-gap;
+  border-radius: $keyboard-border-radius;
+  background-color: $color-3;
+  // overflow: hidden;
+
+  box-shadow: 0 10px 15px 0px rgb(0 0 0 / 60%), 0 15px 25px 0px rgb(0 0 0 / 60%);
+  border: 2px solid $color-3;
+
+  &:not(:last-child) {
+    margin-bottom: 30px;
+  }
+
+  &-container {
+    flex-direction: column;
+    height: 100vh;
+    margin: 0 10px;
+    @extend %flex-container;
+  }
+}
+
+.title {
+  color: $color-3;
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid $color-3;
+  border-radius: 7px;
+}
+
+.description {
+  color: $color-3;
+
+  span {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 3px 5px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+}
+
+.row {
+  @extend %flex;
+}
+
+.key {
+  position: relative;
+  z-index: 5;
+  width: $key-size;
+  height: $key-size;
+  margin: $key-gap;
+  border-radius: $key-border-radius;
+  cursor: pointer;
+  
+  transition: background-color .3s, box-shadow .3s, color .3s;
+  background-color: $color-3;
+  box-shadow: inset 0 0 0 2px $color-5, inset 0 0 0 3px $color-1;
+
+  @extend %flex-container;
+
+  &--backspace {
+    width: 158px;
+  }
+
+  &--tab {
+    width: 90px;
+  }
+
+  &--caps-lock {
+    width: 108px;
+  }
+
+  &--enter {
+    width: 178px;
+  }
+
+  &--shift {
+    &-left {
+      width: 158px;
+    }
+
+    &-right {
+      width: 128px;
+    }
+  }
+
+  &--space {
+    max-width: 498px;
+    width: 100%;
+  }
+
+  & > :first-child {
+      top: $key-inner-position;
+      left: $key-inner-position;
+  }
+
+  & > :last-child {
+      right: $key-inner-position;
+      bottom: $key-inner-position;
+  }
+
+  &:hover,
+  &.is-pressed {
+    background-color: $color-6;
+    color: $color-1;
+    box-shadow: 0 0 3px 1px rgba(59,64,73,0.41), inset 0 0 0 1px $color-6, inset 0 0 0 3px $color-4;
+  }
+
+  &.is-active,
+  &:active { 
+    color: $color-1;
+    background-color: $color-9;
+    box-shadow: 0 0 3px 1px rgba(59,64,73,0.41), inset 0 0 0 1px $color-9, inset 0 0 0 3px $color-6;
+  }
+}
+
+.input-area {
+  max-width: $container-size;
+  min-width: $container-size;
+  width: $container-size;
+  max-height: 460px;
+  min-height: 120px;
+  height: 300px;
+  margin-bottom: 30px;
+  outline: none;
+  font-size: 1.375rem;
+  background-color: $color-8;
+  padding: 1rem;
+  font-weight: normal;
+  transition: 0.1s;
+
+  box-shadow: 0 10px 15px 0px rgb(0 0 0 / 50%), 0 15px 35px 0px rgb(0 0 0 / 50%);
+  border-radius: $keyboard-border-radius;
+  color: $color-1;
+  border: 2px solid $color-7;
+  box-sizing: border-box;
+
+}
