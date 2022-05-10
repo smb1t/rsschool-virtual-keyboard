@@ -116,7 +116,7 @@ class VirtualKeyboard {
 
     const descr = [
       'Клавиатура создана в операционной системе Windows.',
-      'Для переключения языка используется комбинация: <span>Ctrl</span> + <span>Shift</span>. Клавиши <span>Shift</span> при клике мышкой работает как <span>Caps Lock</span>.',
+      'Для переключения языка используется комбинация: <span>Ctrl</span> + <span>Shift</span>. Клавиши <span>Shift</span> при клике мышкой работают как <span>Caps Lock</span>.',
     ];
 
     descr.forEach((el) => {
